@@ -1,0 +1,23 @@
+[package]
+name = "common-agent"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+enclave = []
+
+[dependencies]
+cfg-if = { workspace = true }
+common-async = { path = "../../crates/crate-common-async" }
+common-crypto = { path = "../../crates/crate-common-crypto" }
+common-messages = { path = "../../crates/crate-common-messages" }
+common-messages-web = { path = "../../crates/crate-common-messages-web" }
+common-sessions = { path = "../../crates/crate-common-sessions" }
+common-sync = { path = "../../crates/crate-common-sync" }
+common-types = { path = "../../crates/crate-common-types" }
+hashbrown = { workspace = true }
+lazy_static = "1.4.0"
+log = { workspace = true }
+serde = { workspace = true }
+serde_cbor = { workspace = true }

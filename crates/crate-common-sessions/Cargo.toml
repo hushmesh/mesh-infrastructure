@@ -1,0 +1,17 @@
+[package]
+name = "common-sessions"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+enclave = []
+
+[dependencies]
+cfg-if = { workspace = true }
+common-messages = { path = "../crate-common-messages" }
+common-messages-web = { path = "../crate-common-messages-web" }
+common-sync = { path = "../crate-common-sync" }
+common-types = { path = "../crate-common-types" }
+hashbrown = { workspace = true }
+log = { workspace = true }

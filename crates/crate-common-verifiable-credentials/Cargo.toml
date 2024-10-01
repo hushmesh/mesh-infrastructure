@@ -1,0 +1,42 @@
+[package]
+name = "common-verifiable-credentials"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["noenclave"]
+enclave = []
+noenclave = []
+
+[dependencies]
+ahash = "0.8.11"
+base64 = { workspace = true }
+bls12_381_plus = { workspace = true }
+bs58 = { version = "0.5", default-features = false, features = [ "alloc" ] }
+cfg-if = { workspace = true }
+chrono = { workspace = true }
+common-async = { path = "../../crates/crate-common-async" }
+common-crypto = { path = "../../crates/crate-common-crypto" }
+common-messages = { path = "../../crates/crate-common-messages" }
+common-messages-web = { path = "../../crates/crate-common-messages-web" }
+common-types = { path = "../../crates/crate-common-types" }
+fluent-uri = { workspace = true }
+form_urlencoded = { version = "1.2.0" }
+hashbrown = { workspace = true }
+indexmap = { version = "2.2", default-features = false }
+json-ld = { git = "https://github.com/hushmesh/json-ld-nostd.git", rev = "3b7ccb438bb5851592d1c73d18f1015f61968fa7", default-features = false }
+json-syntax = { git = "https://github.com/hushmesh/json-ld-nostd.git", rev = "3b7ccb438bb5851592d1c73d18f1015f61968fa7", default-features = false, features = ["serde_json", "canonicalize"] }
+lazy_static = "1.4.0"
+linked-data = { git = "https://github.com/hushmesh/json-ld-nostd.git", rev = "3b7ccb438bb5851592d1c73d18f1015f61968fa7", default-features = false }
+p256 = "0.13"
+p384 = "0.13"
+rdf-types = { git = "https://github.com/hushmesh/json-ld-nostd.git", rev = "3b7ccb438bb5851592d1c73d18f1015f61968fa7", default-features = false }
+serde_json = { workspace = true }
+ssi = { git = "https://github.com/hushmesh/json-ld-nostd.git", rev = "3b7ccb438bb5851592d1c73d18f1015f61968fa7", default-features = false }
+unsigned-varint = "0.8"
+uuid = { version = "1.10", default-features = false }
+serde = { workspace = true }
+serde_bytes = { workspace = true }
+serde_cbor = { workspace = true }
+zkryptium = { workspace = true }
+rand_core = { workspace = true }

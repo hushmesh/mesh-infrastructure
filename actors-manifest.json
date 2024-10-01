@@ -1,0 +1,61 @@
+{
+  "actors": [
+    {
+      "uns_name": "com.hushmesh.guardian",
+      "uns_entry_type": "Guardian",
+      "dev_port": 8000
+    },
+    {
+      "uns_name": "com.hushmesh.trustee-global",
+      "parent_uns_name": "com.hushmesh.guardian",
+      "uns_entry_type": "Trustee",
+      "trustee_type": "Global",
+      "dev_port": 8001
+    },
+    {
+      "uns_name": "com.hushmesh.trustee-mesh",
+      "parent_uns_name": "com.hushmesh.trustee-global",
+      "uns_entry_type": "Trustee",
+      "trustee_type": "Mesh",
+      "dev_port": 8002
+    },
+    {
+      "uns_name": "com.hushmesh.trustee-root",
+      "parent_uns_name": "com.hushmesh.trustee-mesh",
+      "uns_entry_type": "Trustee",
+      "trustee_type": "Root",
+      "dev_port": 8003
+    },
+    {
+      "uns_name": "com.hushmesh.trustee-intermediate",
+      "parent_uns_name": "com.hushmesh.trustee-root",
+      "uns_entry_type": "Trustee",
+      "trustee_type": "Intermediate",
+      "dev_port": 8004
+    },
+    {
+      "uns_name": "com.hushmesh.trustee-hushmesh",
+      "parent_uns_name": "com.hushmesh.trustee-intermediate",
+      "uns_entry_type": "Trustee",
+      "trustee_type": "Crew",
+      "dev_port": 8005
+    },
+    {
+      "uns_name": "com.hushmesh.agent-email",
+      "parent_uns_name": "com.hushmesh.trustee-hushmesh",
+      "uns_entry_type": "Agent",
+      "dependencies": [
+        "com.hushmesh.connector-https"
+      ],
+      "needs_config_file": true,
+      "dev_agent_trustee_port": 8010
+    },
+    {
+      "uns_name": "com.hushmesh.agent-vdr",
+      "parent_uns_name": "com.hushmesh.trustee-hushmesh",
+      "uns_entry_type": "Agent",
+      "dependencies": [],
+      "dev_agent_trustee_port": 8026
+    }
+  ]
+}

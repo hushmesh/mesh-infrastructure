@@ -1,0 +1,16 @@
+[package]
+name = "common-enclave-processor"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+enclave = []
+
+[dependencies]
+cfg-if = { workspace = true }
+common-async = { path = "../../crates/crate-common-async" }
+common-messages = { path = "../../crates/crate-common-messages" }
+common-sessions = { path = "../../crates/crate-common-sessions" }
+common-types = { path = "../../crates/crate-common-types" }
+log = { workspace = true }

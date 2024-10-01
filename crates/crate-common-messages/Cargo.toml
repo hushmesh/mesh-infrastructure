@@ -1,0 +1,24 @@
+[package]
+name = "common-messages"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+enclave = []
+
+[dependencies]
+cfg-if = { workspace = true }
+common-build-injection = { path = "../crate-common-build-injection" }
+common-crypto = { path = "../crate-common-crypto" }
+common-types = { path = "../crate-common-types" }
+dyn-clone = { workspace = true }
+hashbrown = { workspace = true }
+log = { workspace = true }
+num = { workspace = true }
+num-derive = { workspace = true }
+num-traits = { workspace = true }
+regex = { workspace = true }
+serde = { workspace = true }
+serde_bytes = { workspace = true }
+serde_cbor = { workspace = true }

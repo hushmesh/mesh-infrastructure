@@ -1,0 +1,50 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "app-create-build-data",
+    "crates/crate-common-agent",
+    "crates/crate-common-async",
+    "crates/crate-common-build-injection",
+    "crates/crate-common-crypto",
+    "crates/crate-common-messages",
+    "crates/crate-common-messages-web",
+    "crates/crate-common-messages-verifiable-credentials",
+    "crates/crate-common-sync",
+    "crates/crate-common-types",
+    "crates/crate-common-verifiable-credentials",
+    "actors/actor-vdr-agent",
+]
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[patch.crates-io]
+bls12_381_plus = { git = "https://github.com/hushmesh/bls12_381_plus", rev = "8b9c98902aca4d0b6f450c239bdc15ffd6dd8689" }
+zkryptium = { git = "https://github.com/hushmesh/zkryptium", rev = "e74ef9de6f2aa3f13a80b25aaef1e16b2c37954a" }
+
+[workspace.dependencies]
+base64 = { version = "0.22.1", default-features = false, features = ["alloc"] }
+cfg-if = "1.0"
+chrono = { version = "0.4.38", default-features = false, features = ["alloc"] }
+dyn-clone = "1.0.17"
+hashbrown = { version = "0.14.5" }
+log = "0.4.22"
+md-5 = { version = "0.10", default-features = false }
+num = { version = "0.4.3", default-features = false }
+num-derive = { version = "0.4.2", default-features = false }
+num-traits = { version = "0.2.19", default-features = false }
+percent-encoding = { version = "2.2.0", default-features = false, features = ["alloc"] }
+regex = { version = "1.10", default-features = false, features = ["unicode-perl"] }
+serde = { version = "1.0.164", default-features = false, features = ["alloc", "derive"] }
+serde_cbor = { version = "0.11.2", default-features = false, features = ["alloc", "unsealed_read_write"] }
+serde_json = { version = "1.0.120", default-features = false, features = ["alloc"] }
+serde_bytes = { version = "0.11.15", default-features = false, features = ["alloc"] }
+fluent-uri = { version = "0.2.0", default-features = false }
+zkryptium = { version = "=0.3.0", default-features = false, features = ["bbsplus"] }
+rand_core = {version = "0.6.4", default-features = false }
+bls12_381_plus = { version = "=0.8.18", default-features = false, features = ["alloc", "groups", "pairings"] }
+

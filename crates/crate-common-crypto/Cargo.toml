@@ -1,0 +1,22 @@
+[package]
+name = "common-crypto"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+enclave = []
+
+[dependencies]
+cfg-if = { workspace = true }
+common-sync = { path = "../crate-common-sync" }
+common-types = { path = "../crate-common-types" }
+log = { workspace = true }
+serde = { workspace = true }
+serde_cbor = { workspace = true }
+fluent-uri = { workspace = true }
+rand_core = { workspace = true }
+digest = "0.10.7"
+elliptic-curve = { version = "0.13.8", default-features = false, features = ["hash2curve"] }
+bls12_381_plus = { workspace = true }
+zkryptium = { workspace = true }

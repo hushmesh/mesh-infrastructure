@@ -1,0 +1,15 @@
+edition = "2021"
+
+### Unstable features we'd like to use.
+#
+## pre-commit enables this on the command line.
+#imports_granularity = "Item"
+#
+## These directories are excluded from pre-commit.  And, it's up to you not to
+## run `cargo fmt`!
+#ignore = [
+#  "crates/crate-intel-sgx-dcap-ql-rs",
+#  "crates/crate-intel-sgx-dcap-ql-sys",
+#  "crates/crate-intel-sgx-dcap-quoteverify-rs",
+#  "crates/crate-intel-sgx-dcap-quoteverify-sys",
+#]

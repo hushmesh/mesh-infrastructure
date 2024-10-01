@@ -1,0 +1,215 @@
+--- a/wolfcrypt/src/wc_port.c
++++ b/wolfcrypt/src/wc_port.c
+@@ -2846,13 +2846,16 @@ int wolfSSL_CryptHwMutexUnLock(void)
+ 
+     /* Use user own mutex */
+ 
+-    /*
+-    int wc_InitMutex(wolfSSL_Mutex* m) { ... }
+-    int wc_FreeMutex(wolfSSL_Mutex *m) { ... }
+-    int wc_LockMutex(wolfSSL_Mutex *m) { ... }
+-    int wc_UnLockMutex(wolfSSL_Mutex *m) { ... }
+-    */
+-
++    int wc_InitMutex(wolfSSL_Mutex* m) { sgx_thread_mutex_init(m, NULL); }
++    int wc_FreeMutex(wolfSSL_Mutex *m) { sgx_thread_mutex_destroy(m); }
++    int wc_LockMutex(wolfSSL_Mutex *m) { sgx_thread_mutex_lock(m); }
++    int wc_UnLockMutex(wolfSSL_Mutex *m) { sgx_thread_mutex_unlock(m); }
++
++    int wc_InitRwLock(wolfSSL_RwLock* m) { sgx_thread_rwlock_init(m, NULL); }
++    int wc_FreeRwLock(wolfSSL_RwLock* m) { sgx_thread_rwlock_destroy(m); }
++    int wc_LockRwLock_Wr(wolfSSL_RwLock* m) { sgx_thread_rwlock_wrlock(m); }
++    int wc_LockRwLock_Rd(wolfSSL_RwLock* m) { sgx_thread_rwlock_rdlock(m); }
++    int wc_UnLockRwLock(wolfSSL_RwLock* m) { sgx_thread_rwlock_unlock(m); }
+ #else
+     #warning No mutex handling defined
+ 
+@@ -3122,6 +3125,144 @@ time_t mqx_time(time_t* timer)
+ 
+ #endif /* FREESCALE_MQX || FREESCALE_KSDK_MQX */
+ 
++#if defined(WOLFSSL_SGX) && defined(TIME_OVERRIDES)
++
++struct timespec {
++        time_t   tv_sec;        /* seconds */
++        long     tv_nsec;       /* nanoseconds */
++};
++
++#define CLOCK_REALTIME 0
++
++int u_clock_gettime_ocall(int* retval, int *error, int clk_id, struct timespec *tp);
++
++time_t XTIME(time_t *timer) {
++    struct timespec result;
++    time_t result_sec;
++    int retval = 0, error = 0;
++    int rv;
++
++    rv = u_clock_gettime_ocall(&retval, &error, CLOCK_REALTIME, &result);
++    if ((rv == 0) && (retval == 0)) {
++        result_sec = result.tv_sec;
++    } else if (rv == 0) {
++        result_sec = error;
++    } else {
++        result_sec = rv;
++    }
++
++    if (timer != NULL) {
++        *timer = result_sec;
++    }
++    return result_sec;
++}
++
++word32 LowResTimer(void)
++{
++    return (word32) XTIME(0);
++}
++
++#define LEAPOCH (946684800LL + 86400*(31+29))
++
++#define DAYS_PER_400Y (365*400 + 97)
++#define DAYS_PER_100Y (365*100 + 24)
++#define DAYS_PER_4Y   (365*4   + 1)
++
++//  __secs_to_tm from musl/src/time/__secs_to_tm.c
++
++static int __secs_to_tm(long long t, struct tm *tm)
++{
++        long long days, secs, years;
++        int remdays, remsecs, remyears;
++        int qc_cycles, c_cycles, q_cycles;
++        int months;
++        int wday, yday, leap;
++        static const char days_in_month[] = {31,30,31,30,31,31,30,31,30,31,31,29};
++
++        /* Reject time_t values whose year would overflow int */
++        if (t < INT_MIN * 31622400LL || t > INT_MAX * 31622400LL)
++                return -1;
++
++        secs = t - LEAPOCH;
++        days = secs / 86400;
++        remsecs = secs % 86400;
++        if (remsecs < 0) {
++                remsecs += 86400;
++                days--;
++        }
++
++        wday = (3+days)%7;
++        if (wday < 0) wday += 7;
++
++        qc_cycles = days / DAYS_PER_400Y;
++        remdays = days % DAYS_PER_400Y;
++        if (remdays < 0) {
++                remdays += DAYS_PER_400Y;
++                qc_cycles--;
++        }
++
++        c_cycles = remdays / DAYS_PER_100Y;
++        if (c_cycles == 4) c_cycles--;
++        remdays -= c_cycles * DAYS_PER_100Y;
++
++        q_cycles = remdays / DAYS_PER_4Y;
++        if (q_cycles == 25) q_cycles--;
++        remdays -= q_cycles * DAYS_PER_4Y;
++
++        remyears = remdays / 365;
++        if (remyears == 4) remyears--;
++        remdays -= remyears * 365;
++
++        leap = !remyears && (q_cycles || !c_cycles);
++        yday = remdays + 31 + 28 + leap;
++        if (yday >= 365+leap) yday -= 365+leap;
++
++        years = remyears + 4*q_cycles + 100*c_cycles + 400LL*qc_cycles;
++
++        for (months=0; days_in_month[months] <= remdays; months++)
++                remdays -= days_in_month[months];
++
++        if (months >= 10) {
++                months -= 12;
++                years++;
++        }
++
++        if (years+100 > INT_MAX || years+100 < INT_MIN)
++                return -1;
++
++        tm->tm_year = years + 100;
++        tm->tm_mon = months + 2;
++        tm->tm_mday = remdays + 1;
++        tm->tm_wday = wday;
++        tm->tm_yday = yday;
++
++        tm->tm_hour = remsecs / 3600;
++        tm->tm_min = remsecs / 60 % 60;
++        tm->tm_sec = remsecs % 60;
++
++        return 0;
++}
++
++//  __gmtime_r from musl/src/time/gmtime_r.c
++
++static struct tm *__gmtime_r(const time_t *restrict t, struct tm *restrict tm)
++{
++    if ((t == NULL) || (tm == NULL)) {
++        return 0;
++    }
++        if (__secs_to_tm(*t, tm) < 0) {
++                return 0;
++        }
++        tm->tm_isdst = 0;
++        return tm;
++}
++
++struct tm* XGMTIME(const time_t* timer, struct tm* tmp) {
++    return __gmtime_r(timer, tmp);
++}
++
++#endif /* WOLFSSL_SGX && TIME_OVERRIDES */
++
+ 
+ #if defined(WOLFSSL_TIRTOS) && defined(USER_TIME)
+ 
+diff --git a/wolfssl/wolfcrypt/settings.h b/wolfssl/wolfcrypt/settings.h
+index bc544c7..b79647b 100644
+--- a/wolfssl/wolfcrypt/settings.h
++++ b/wolfssl/wolfcrypt/settings.h
+@@ -2199,8 +2199,9 @@ extern void uITRON4_free(void *p) ;
+     #define NO_FILESYSTEM
+     #define ECC_TIMING_RESISTANT
+     #define TFM_TIMING_RESISTANT
+-    #define SINGLE_THREADED
+-    #define NO_ASN_TIME /* can not use headers such as windows.h */
++    #define WOLFSSL_USER_MUTEX /* use Linux SGX SDK semaphores */
++    #define WOLFSSL_USE_RWLOCK
++    #define TIME_OVERRIDES /* use SGX ocall to get time */
+     #define HAVE_AESGCM
+     #define USE_CERT_BUFFERS_2048
+ #endif /* WOLFSSL_SGX */
+diff --git a/wolfssl/wolfcrypt/types.h b/wolfssl/wolfcrypt/types.h
+index 01ed929..4296598 100644
+--- a/wolfssl/wolfcrypt/types.h
++++ b/wolfssl/wolfcrypt/types.h
+@@ -1389,7 +1389,7 @@ typedef struct w64wrapper {
+         #define FALSE 0
+     #endif
+ 
+-    #ifdef SINGLE_THREADED
++    #if defined(SINGLE_THREADED) || defined(WOLFSSL_SGX)
+         #if defined(WC_32BIT_CPU)
+             typedef void*        THREAD_RETURN;
+         #else
+diff --git a/wolfssl/wolfcrypt/wc_port.h b/wolfssl/wolfcrypt/wc_port.h
+index bf5ef6b..12e99b4 100644
+--- a/wolfssl/wolfcrypt/wc_port.h
++++ b/wolfssl/wolfcrypt/wc_port.h
+@@ -298,7 +298,9 @@
+     #elif defined(WOLFSSL_EMBOS)
+         typedef OS_MUTEX wolfSSL_Mutex;
+     #elif defined(WOLFSSL_USER_MUTEX)
+-        /* typedef User_Mutex wolfSSL_Mutex; */
++        #include <sgx_thread.h>
++        typedef sgx_thread_mutex_t wolfSSL_Mutex;
++        typedef sgx_thread_rwlock_t wolfSSL_RwLock;
+     #elif defined(WOLFSSL_LINUXKM)
+         /* definitions are in linuxkm/linuxkm_wc_port.h */
+     #else

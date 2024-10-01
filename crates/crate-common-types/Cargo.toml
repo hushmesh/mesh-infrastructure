@@ -1,0 +1,27 @@
+[package]
+name = "common-types"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+enclave = []
+
+[dependencies]
+base64 = { workspace = true }
+common-sync = { path = "../crate-common-sync" }
+cfg-if = { workspace = true }
+chrono = { workspace = true }
+hashbrown = { workspace = true }
+hostname = { version = "0.3" }
+lazy_static = "1.4.0"
+log = { workspace = true }
+num-derive = { workspace = true }
+num-traits = { workspace = true }
+regex = { workspace = true }
+serde = { workspace = true }
+serde_bytes = { workspace = true }
+serde_cbor = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }

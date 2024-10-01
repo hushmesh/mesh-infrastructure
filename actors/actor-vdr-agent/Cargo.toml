@@ -1,0 +1,32 @@
+[package]
+name = "actor-vdr-agent"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+enclave = []
+test_no_build_data = []
+
+[dependencies]
+cfg-if = { workspace = true }
+common-agent = { path = "../../crates/crate-common-agent" }
+common-async = { path = "../../crates/crate-common-async" }
+common-build-injection = { path = "../../crates/crate-common-build-injection" }
+common-crypto = { path = "../../crates/crate-common-crypto" }
+common-enclave-processor = { path = "../../crates/crate-common-enclave-processor" }
+common-messages = { path = "../../crates/crate-common-messages" }
+common-messages-verifiable-credentials = { path = "../../crates/crate-common-messages-verifiable-credentials" }
+common-messages-web = { path = "../../crates/crate-common-messages-web" }
+common-sessions = { path = "../../crates/crate-common-sessions" }
+common-sync = { path = "../../crates/crate-common-sync" }
+common-types = { path = "../../crates/crate-common-types" }
+common-verifiable-credentials = { path = "../../crates/crate-common-verifiable-credentials" }
+log = { workspace = true }
+num = { version = "0.4.0" }
+num-derive = { version = "0.3.3" }
+num-traits = { version = "0.2.15" }
+serde = { workspace = true }
+serde_bytes = { workspace = true }
+serde_cbor = { workspace = true }
+serde_json = { workspace = true }
