@@ -10,7 +10,7 @@ This repository contains the crates needed to create a Mesh Agent, along with an
 
 ## Background
 
-These libraries were developed as part of the "Privacy Preserving Digital Credential Wallets & Verifiers" topic call administered by the Department of Homeland Security (DHS) Science and Technology Directorate (S&T) Silicon Valley Innovation Program (SVIP). [More information about this topic call can be found here](https://www.dhs.gov/science-and-technology/hushmesh).
+This work is funded in part by the U.S Department of Homeland Security Science and Technology Directorate (DHS S&T) Silicon Valley Innovation Program (SVIP) under contract DHS SVIP OTA No. 70RSAT24T00000010 (Confidential Computing-Based Mesh Holder and Mesh Verifier Agents/Phase 1). Any opinions contained herein are those of the performer and do not necessarily reflect those of DHS. [More information about this topic call can be found here](https://www.dhs.gov/science-and-technology/hushmesh).
 
 They are grouped into the following categories:
 
